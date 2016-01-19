@@ -2,7 +2,7 @@
 #define SERVICEPROXYBASE_H
 
 #include "binder/Parcel.h"
-#include <string>
+#include <utils/String8.h>
 #include "ServiceBaseGlobal.h"
 
 class ServiceProxyBaseImpl;
@@ -13,7 +13,7 @@ public:
     explicit ServiceProxyBase(const char *name);
     virtual ~ServiceProxyBase();
 
-    std::string name();
+    android::String8 name();
 
     bool isConnected();
     virtual void onConnected();

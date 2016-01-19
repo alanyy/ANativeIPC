@@ -20,7 +20,7 @@ ServiceProxyBaseImpl::ServiceProxyBaseImpl(const char *name, ServiceProxyBase *i
 
 ServiceProxyBaseImpl::~ServiceProxyBaseImpl()
 {
-    BSLOGD("ServiceProxyBaseImpl::~ServiceProxyBaseImpl %s", m_name.c_str());
+    BSLOGD("ServiceProxyBaseImpl::~ServiceProxyBaseImpl %s", m_name.string());
     android::Mutex::Autolock _l(m_serviceLock);
     if (m_bp != NULL) {
         BSLOGD("ServiceProxyBaseImpl::~ServiceProxyBaseImpl unlink to death");
@@ -41,7 +41,7 @@ void ServiceProxyBaseImpl::binderDied(const android::wp<android::IBinder> &who)
     m_bp = NULL;
 }
 
-std::string &ServiceProxyBaseImpl::name()
+android::String8  &ServiceProxyBaseImpl::name()
 {
     return m_name;
 }
@@ -55,7 +55,7 @@ bool ServiceProxyBaseImpl::tryConnect()
         android::sp<android::IBinder> binder;
         int retry = RETRY_CONNECT_CNT;
         do {
-            binder = sm->getService(android::String16(m_name.c_str()));
+            binder = sm->getService(android::String16(m_name.string()));
             BSLOGD("ServiceProxyBaseImpl::tryConnect get service %x",binder.get());
             if (binder != NULL) {
                 break;

@@ -12,15 +12,15 @@ ServiceBase::ServiceBase(const char *name)
 
 ServiceBase::~ServiceBase()
 {
-    BSLOGD("ServiceBase::~ServiceBase %s", name().c_str());
+    BSLOGD("ServiceBase::~ServiceBase %s", name().string());
 }
 
-std::string ServiceBase::name()
+android::String8 ServiceBase::name()
 {
     if(m_impl != NULL) {
         return m_impl->name();
     }
-    return std::string();
+    return android::String8();
 }
 
 void ServiceBase::initialize()

@@ -18,7 +18,7 @@ ServiceBaseImpl::~ServiceBaseImpl()
     m_if = NULL;
 }
 
-std::string &ServiceBaseImpl::name()
+android::String8 &ServiceBaseImpl::name()
 {
     return m_name;
 }
@@ -55,8 +55,8 @@ android::status_t ServiceBaseImpl::onTransact(uint32_t code, const android::Parc
 
 int ServiceBaseImpl::addService()
 {
-    BSLOGD("ServiceBaseImpl::addService %s", m_name.c_str());
-    return m_svcMng->addService(android::String16(m_name.c_str()), this);
+    BSLOGD("ServiceBaseImpl::addService %s", m_name.string());
+    return m_svcMng->addService(android::String16(m_name.string()), this);
 }
 
 int ServiceBaseImpl::removeService()

@@ -3,7 +3,7 @@
 
 #include "ServiceBaseGlobal.h"
 #include "binder/Parcel.h"
-#include <string>
+#include <utils/String8.h>
 
 class ServiceBaseImpl;
 
@@ -13,7 +13,7 @@ public:
     explicit ServiceBase(const char *name);
     virtual ~ServiceBase();
 
-    virtual std::string name();
+    virtual android::String8 name();
 
     virtual void initialize();
     virtual void finalize();
