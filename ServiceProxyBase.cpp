@@ -2,7 +2,6 @@
 #include "cutils/atomic.h"
 #include "Log.h"
 #include "ServiceProxyBaseImpl.h"
-#include "ServiceBaseDefines.h"
 
 const int SERVICE_CONNECTED = 0x1;
 
@@ -44,6 +43,13 @@ void ServiceProxyBase::onDisconnected()
     android_atomic_and(~SERVICE_CONNECTED, &m_status);
 }
 
+int ServiceProxyBase::onAsyncResponse(unsigned int code, const android::Parcel &reply)
+{
+    UNUSED(code);
+    UNUSED(reply);
+    return BS_UNKNOWN_TRANSACTION;
+}
+
 bool ServiceProxyBase::tryConnect()
 {
     if(m_impl != NULL) {
@@ -52,10 +58,42 @@ bool ServiceProxyBase::tryConnect()
     return false;
 }
 
-int ServiceProxyBase::sendRequest(unsigned int code, const android::Parcel &data, android::Parcel *reply, unsigned int flags)
+bool ServiceProxyBase::setupAsyncRequest()
 {
     if(m_impl != NULL) {
-        return m_impl->sendRequest(code, data, reply, flags);
+        return m_impl->setupAsyncRequest();
+    }
+    return false;
+}
+
+bool ServiceProxyBase::teardownAsyncRequest()
+{
+    if(m_impl != NULL) {
+        return m_impl->teardownAsyncRequest();
+    }
+    return false;
+}
+
+int ServiceProxyBase::sendSyncRequest(unsigned int code, const android::Parcel &data, android::Parcel *reply)
+{
+    if(m_impl != NULL) {
+        return m_impl->sendSyncRequest(code, data, reply);
+    }
+    return BS_NO_CONNECTION;
+}
+
+bool ServiceProxyBase::prepareAsyncData(android::Parcel &data)
+{
+    if(m_impl != NULL) {
+        return m_impl->prepareAsyncData(data);
+    }
+    return false;
+}
+
+int ServiceProxyBase::sendAsyncRequest(unsigned int code, const android::Parcel &data)
+{
+    if(m_impl != NULL) {
+        return m_impl->sendAsyncRequest(code, data);
     }
     return BS_NO_CONNECTION;
 }

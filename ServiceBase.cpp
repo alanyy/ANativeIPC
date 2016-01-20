@@ -1,7 +1,6 @@
 #include "ServiceBase.h"
 #include "Log.h"
 #include "ServiceBaseImpl.h"
-#include "ServiceBaseDefines.h"
 
 ServiceBase::ServiceBase(const char *name)
     : m_impl(NULL)
@@ -44,13 +43,25 @@ void ServiceBase::exec()
     }
 }
 
-int ServiceBase::onRequest(unsigned int code, const android::Parcel &data, android::Parcel *reply, unsigned int flags)
+int ServiceBase::onSyncRequest(unsigned int code, const android::Parcel &data, android::Parcel *reply)
 {
     UNUSED(code);
     UNUSED(data);
     UNUSED(reply);
-    UNUSED(flags);
-    return BS_NO_CONNECTION;
+    return BS_UNKNOWN_TRANSACTION;
+}
+
+int ServiceBase::onAsyncRequest(SenderId &id, unsigned int code, const android::Parcel &data)
+{
+    UNUSED(id);
+    UNUSED(code);
+    UNUSED(data);
+    return BS_UNKNOWN_TRANSACTION;
+}
+
+void ServiceBase::onSenderDisconnect(SenderId &id)
+{
+    UNUSED(id);
 }
 
 int ServiceBase::addService()
@@ -65,6 +76,14 @@ int ServiceBase::removeService()
 {
     if(m_impl != NULL) {
         return m_impl->removeService();
+    }
+    return BS_NO_CONNECTION;
+}
+
+int ServiceBase::sendAsyncResponse(SenderId &id, unsigned int code, const android::Parcel &data)
+{
+    if(m_impl != NULL) {
+        return m_impl->sendAsyncResponse(id, code, data);
     }
     return BS_NO_CONNECTION;
 }

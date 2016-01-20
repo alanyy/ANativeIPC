@@ -11,19 +11,21 @@ class TestServiceProxy : public ServiceProxyBase
 {
 public:
     enum commandId {
-        First_Command = SERVICE_FIRST_TRANSACTION,
-        Asyn_Command
+        Sync_Command = SERVICE_FIRST_TRANSACTION,
+        Async_Command
     };
 
     TestServiceProxy();
     ~TestServiceProxy();
 
     void sendTestCommand();
-    void setupAsynCall();
-    static int ipcthread(void *arg);
+
+    virtual int onAsyncResponse(unsigned int code, const android::Parcel &reply);
+//    void setupAsynCall();
+//    static int ipcthread(void *arg);
 private:
-    android::sp<AnonymousBinder> m_binder;
-    android::sp<android::ProcessState> m_proc;
+//    android::sp<AnonymousBinder> m_binder;
+//    android::sp<android::ProcessState> m_proc;
 };
 
 #endif // TESTSERVICEPROXY_H

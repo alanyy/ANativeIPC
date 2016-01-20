@@ -3,8 +3,10 @@
 #include "ServiceBaseDefines.h"
 #include "ServiceProxyBase.h"
 #include "ServiceBinderProxy.h"
+#include "AnonymousBinder.h"
 #include <unistd.h>
 #include "binder/IServiceManager.h"
+#include "binder/ProcessState.h"
 
 const int RETRY_CONNECT_CNT = 5;
 const int CONNECT_SLEEP_SECOND = 1000000;
@@ -12,7 +14,9 @@ const int CONNECT_SLEEP_SECOND = 1000000;
 ServiceProxyBaseImpl::ServiceProxyBaseImpl(const char *name, ServiceProxyBase *interface)
     : m_if(interface)
     , m_bp(NULL)
+    , m_asyncBinder(NULL)
     , m_serviceLock()
+    , m_asyncLock()
     , m_name(name)
 {
     BSLOGD("ServiceProxyBaseImpl::ServiceProxyBaseImpl %s", name);
@@ -21,12 +25,18 @@ ServiceProxyBaseImpl::ServiceProxyBaseImpl(const char *name, ServiceProxyBase *i
 ServiceProxyBaseImpl::~ServiceProxyBaseImpl()
 {
     BSLOGD("ServiceProxyBaseImpl::~ServiceProxyBaseImpl %s", m_name.c_str());
-    android::Mutex::Autolock _l(m_serviceLock);
+    m_serviceLock.lock();
     if (m_bp != NULL) {
         BSLOGD("ServiceProxyBaseImpl::~ServiceProxyBaseImpl unlink to death");
         m_bp->unlinkToDeath(this);
         m_bp = NULL;
     }
+    m_serviceLock.unlock();
+    m_asyncLock.lock();
+    if(m_asyncBinder != NULL) {
+        m_asyncBinder = NULL;
+    }
+    m_asyncLock.unlock();
     m_if = NULL;
 }
 
@@ -50,7 +60,7 @@ bool ServiceProxyBaseImpl::tryConnect()
 {
     BSLOGD("ServiceProxyBaseImpl::tryConnect");
     android::Mutex::Autolock _l(m_serviceLock);
-    if (m_bp.get() == NULL) {
+    if (m_bp == NULL) {
         android::sp<android::IServiceManager> sm = android::defaultServiceManager();
         android::sp<android::IBinder> binder;
         int retry = RETRY_CONNECT_CNT;
@@ -84,14 +94,79 @@ bool ServiceProxyBaseImpl::tryConnect()
     return true;
 }
 
-int ServiceProxyBaseImpl::sendRequest(unsigned int code, const android::Parcel &data, android::Parcel *reply, unsigned int flags)
+bool ServiceProxyBaseImpl::setupAsyncRequest()
 {
-    BSLOGD("ServiceProxyBaseImpl::sendRequest code is %d", code);
+    android::Mutex::Autolock _l(m_asyncLock);
+    if(m_asyncBinder == NULL) {
+        m_asyncBinder = new AnonymousBinder(m_if);
+        if(m_asyncBinder != NULL) {
+            android::ProcessState::self()->startThreadPool();
+            android::Parcel data;
+            android::Parcel reply;
+            data.writeStrongBinder(m_asyncBinder);
+            sendSyncRequest(ADD_ASYNC_BINDER, data, &reply);
+            if(reply.errorCheck() == BS_NO_ERROR){
+                SenderId remoteId = reply.readInt32();
+                BSLOGD("ServiceProxyBaseImpl::setupAsyncRequest remoteId is %d",remoteId);
+                m_asyncBinder->setRemoteId(remoteId);
+                return true;
+            }
+            else {
+                BSLOGW("ServiceProxyBaseImpl::setupAsyncRequest reply is failed");
+            }
+        }
+        return false;
+    }
+    return true;
+}
+
+bool ServiceProxyBaseImpl::teardownAsyncRequest()
+{
+    android::Mutex::Autolock _l(m_asyncLock);
+    if(m_asyncBinder != NULL) {
+        android::Parcel data;
+        android::Parcel reply;
+        data.writeInt32(m_asyncBinder->remoteId());
+        sendSyncRequest(REMOVE_ASYNC_BINDER, data, &reply);
+        if(reply.readInt32() == BS_NO_ERROR){
+            return true;
+        }
+        BSLOGW("ServiceProxyBaseImpl::teardownAsyncRequest reply is failed");
+        return false;
+    }
+    return true;
+}
+
+int ServiceProxyBaseImpl::sendSyncRequest(unsigned int code, const android::Parcel &data, android::Parcel *reply)
+{
+    BSLOGD("ServiceProxyBaseImpl::sendSyncRequest code is %d", code);
     android::Mutex::Autolock _l(m_serviceLock);
     if(m_bp.get()) {
-        return m_bp->Transact(code, data, reply, flags);
+        return m_bp->Transact(code, data, reply);
     }
-    BSLOGW("ServiceProxyBase::sendRequest maybe not connected");
+    BSLOGW("ServiceProxyBase::sendSyncRequest maybe not connected");
+    m_bp = NULL;
+    return BS_NO_CONNECTION;
+}
+
+bool ServiceProxyBaseImpl::prepareAsyncData(android::Parcel &data)
+{
+    android::Mutex::Autolock _l(m_asyncLock);
+    if(m_asyncBinder != NULL) {
+        data.writeInt32(m_asyncBinder->remoteId());
+        return true;
+    }
+    return false;
+}
+
+int ServiceProxyBaseImpl::sendAsyncRequest(unsigned int code, const android::Parcel &data)
+{
+    BSLOGD("ServiceProxyBaseImpl::sendAsyncRequest code is %d", code);
+    android::Mutex::Autolock _l(m_serviceLock);
+    if(m_bp.get()) {
+        return m_bp->Transact(code, data, NULL, ASYN_CALL);
+    }
+    BSLOGW("ServiceProxyBase::sendAsyncRequest maybe not connected");
     m_bp = NULL;
     return BS_NO_CONNECTION;
 }

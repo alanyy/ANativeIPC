@@ -4,6 +4,7 @@
 #include "binder/Parcel.h"
 #include <string>
 #include "ServiceBaseGlobal.h"
+#include "ServiceBaseDefines.h"
 
 class ServiceProxyBaseImpl;
 
@@ -18,10 +19,17 @@ public:
     bool isConnected();
     virtual void onConnected();
     virtual void onDisconnected();
+
+    virtual int onAsyncResponse(unsigned int code, const android::Parcel &reply);
 protected:
     bool tryConnect();
-    int sendRequest(unsigned int code, const android::Parcel &data,
-                    android::Parcel *reply, unsigned int flags = 0);
+    bool setupAsyncRequest();
+    bool teardownAsyncRequest();
+
+    int sendSyncRequest(unsigned int code, const android::Parcel &data,
+                        android::Parcel *reply);
+    bool prepareAsyncData(android::Parcel &data);
+    int sendAsyncRequest(unsigned int code, const android::Parcel &data);
 
 private:
     DISABLE_COPY(ServiceProxyBase)

@@ -8,9 +8,10 @@
 
 #define LOG_TAG "servicebase"
 
-#define BSLOGI(...) ALOGI(__VA_ARGS__)
+#define BSLOGV(...) ALOGV(__VA_ARGS__)
 #define BSLOGD(...) ALOGD(__VA_ARGS__)
 #define BSLOGW(...) ALOGW(__VA_ARGS__)
 #define BSLOGE(...) ALOGE(__VA_ARGS__)
+#define BSASSERT(cond, ...) ALOG_ASSERT(cond, ##__VA_ARGS__)
 
 #endif // LOG_H

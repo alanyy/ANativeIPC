@@ -9,6 +9,7 @@
 
 class ServiceBinderProxy;
 class ServiceProxyBase;
+class AnonymousBinder;
 
 class ServiceProxyBaseImpl : public android::IBinder::DeathRecipient
 {
@@ -21,14 +22,21 @@ public:
     std::string &name();
 
     bool tryConnect();
+    bool setupAsyncRequest();
+    bool teardownAsyncRequest();
 
-    int sendRequest(unsigned int code, const android::Parcel &data,
-                    android::Parcel *reply, unsigned int flags = 0);
+    int sendSyncRequest(unsigned int code, const android::Parcel &data,
+                        android::Parcel *reply);
+    bool prepareAsyncData(android::Parcel &data);
+    int sendAsyncRequest(unsigned int code, const android::Parcel &data);
+
 private:
     DISABLE_COPY(ServiceProxyBaseImpl)
     ServiceProxyBase *m_if;
     android::sp<ServiceBinderProxy> m_bp;
+    android::sp<AnonymousBinder> m_asyncBinder;
     android::Mutex m_serviceLock;
+    android::Mutex m_asyncLock;
     std::string m_name;
 };
 

@@ -9,16 +9,24 @@ class TestService : public ServiceBase
 {
 public:
     enum commandId {
-        First_Command = SERVICE_FIRST_TRANSACTION,
-        Asyn_Command
+        Sync_Command = SERVICE_FIRST_TRANSACTION,
+        Async_Command
     };
     TestService();
     ~TestService();
-    virtual int onRequest(unsigned int code, const android::Parcel &data,
-                          android::Parcel *reply, unsigned int flags);
-    static int asynthread(void *arg);
+//    virtual int onRequest(unsigned int code, const android::Parcel &data,
+//                          android::Parcel *reply, unsigned int flags);
+
+    virtual int onSyncRequest(unsigned int code, const android::Parcel &data,
+                          android::Parcel *reply);
+    virtual int onAsyncRequest(SenderId &id, unsigned int code,
+                               const android::Parcel &data);
+
+    void quitAsyncthread();
+    static int asyncthread(void *arg);
 private:
-    static android::sp<android::IBinder> m_binder;
+//    static android::sp<android::IBinder> m_binder;
+    static SenderId m_sender;
     static android::Condition m_condition;
     static android::Mutex m_lock;
     static bool m_quit;
