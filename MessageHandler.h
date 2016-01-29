@@ -12,7 +12,6 @@ class SERVICEBASE_API MessageHandler : public android::RefBase
 public:
     MessageHandler();
     virtual ~MessageHandler();
-protected:
     virtual void onReceiveMessage(const android::sp<Message> &msg) = 0;
 private:
     DISABLE_COPY(MessageHandler)

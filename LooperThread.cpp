@@ -24,8 +24,7 @@ int LooperThread::start(const char *name, int priority, unsigned int stack)
 int LooperThread::stop()
 {
     if(m_impl != NULL) {
-        m_impl->requestExit();
-        return BS_NO_ERROR;
+        return m_impl->stop();
     }
     return BS_NO_MEMORY;
 }

@@ -41,7 +41,6 @@ public:
 
     int valueCount();
     bool getItemType(int index, Type *type);
-protected:
     virtual ~Message();
 private:
     DISABLE_COPY(Message)
