@@ -3,6 +3,7 @@
 
 #include "binder/Binder.h"
 #include "ServiceBaseDefines.h"
+#include "ServiceBaseGlobal.h"
 
 class ServiceProxyBase;
 
@@ -19,6 +20,7 @@ public:
                                          android::Parcel* reply,
                                          uint32_t flags = 0);
 private:
+    DISABLE_COPY(AnonymousBinder)
     SenderId m_remoteId;
     ServiceProxyBase *m_if;
 };

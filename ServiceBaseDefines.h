@@ -3,6 +3,7 @@
 
 #include "utils/Errors.h"
 #include "binder/IBinder.h"
+#include "utils/ThreadDefs.h"
 
 enum Error_Num {
     BS_NO_ERROR = android::NO_ERROR,
@@ -27,6 +28,15 @@ enum Call_Transaction {
 
 enum Call_Flags {
     ASYN_CALL = android::IBinder::FLAG_ONEWAY
+};
+
+enum {
+    THREAD_PRIORITY_LOWEST         = ANDROID_PRIORITY_LOWEST,
+    THREAD_PRIORITY_BACKGROUND     = ANDROID_PRIORITY_BACKGROUND,
+    THREAD_PRIORITY_NORMAL         = ANDROID_PRIORITY_NORMAL,
+    THREAD_PRIORITY_FOREGROUND     = ANDROID_PRIORITY_FOREGROUND,
+    THREAD_PRIORITY_HIGHEST        = ANDROID_PRIORITY_HIGHEST,
+    THREAD_PRIORITY_DEFAULT        = ANDROID_PRIORITY_DEFAULT
 };
 
 typedef int SenderId;

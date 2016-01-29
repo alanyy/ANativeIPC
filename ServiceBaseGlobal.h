@@ -2,7 +2,7 @@
 #define SERVICEBASEGLOBAL_H
 
 // symbols visibility setting
-#ifndef TM_LIB_EXPORT
+#ifndef SERVICEBASE_API
 #   ifdef SERVICEBASE_LIBRARY
 #       define SERVICEBASE_API __attribute__((visibility("default")))
 #   else
