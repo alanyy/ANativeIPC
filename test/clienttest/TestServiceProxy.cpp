@@ -9,7 +9,6 @@
 
 TestServiceProxy::TestServiceProxy()
     : ServiceProxyBase("testservice")
-//    , m_binder(NULL)
 {
     setupAsyncRequest();
 }
@@ -52,24 +51,3 @@ int TestServiceProxy::onAsyncResponse(unsigned int code, const android::Parcel &
     BSLOGD("TestServiceProxy::onAsyncResponse reply is %s", str);
     return BS_NO_ERROR;
 }
-
-//void TestServiceProxy::setupAsynCall()
-//{
-//    m_proc = android::ProcessState::self();
-//    android::ProcessState::self()->startThreadPool();
-//    m_binder = new AnonymousBinder();
-//    android::Parcel data;
-//    android::Parcel reply;
-//    data.writeStrongBinder(m_binder);
-//    sendRequest(ADD_ASYNC_BINDER, data, &reply);
-//    int ret = reply.readInt32();
-//    BSLOGD("TestServiceProxy::setupAsynCall reply is %d", ret);
-//    androidCreateThread(TestServiceProxy::ipcthread, NULL);
-//}
-
-//int TestServiceProxy::ipcthread(void *arg)
-//{
-//    android::IPCThreadState::self()->joinThreadPool();
-//    return 0;
-//}
-

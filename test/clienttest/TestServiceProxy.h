@@ -21,11 +21,6 @@ public:
     void sendTestCommand();
 
     virtual int onAsyncResponse(unsigned int code, const android::Parcel &reply);
-//    void setupAsynCall();
-//    static int ipcthread(void *arg);
-private:
-//    android::sp<AnonymousBinder> m_binder;
-//    android::sp<android::ProcessState> m_proc;
 };
 
 #endif // TESTSERVICEPROXY_H

@@ -14,8 +14,6 @@ public:
     };
     TestService();
     ~TestService();
-//    virtual int onRequest(unsigned int code, const android::Parcel &data,
-//                          android::Parcel *reply, unsigned int flags);
 
     virtual int onSyncRequest(unsigned int code, const android::Parcel &data,
                           android::Parcel *reply);
@@ -25,7 +23,6 @@ public:
     void quitAsyncthread();
     static int asyncthread(void *arg);
 private:
-//    static android::sp<android::IBinder> m_binder;
     static SenderId m_sender;
     static android::Condition m_condition;
     static android::Mutex m_lock;

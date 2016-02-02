@@ -6,6 +6,7 @@ Message::Message(int what)
     : m_what(what)
     , m_itemNum(0)
 {
+    BSLOGD("Message::Message %d", what);
     memset(m_items, 0, sizeof(m_items));
 }
 
@@ -199,6 +200,7 @@ bool Message::getItemType(int index, Message::Type *type)
 
 Message::~Message()
 {
+    BSLOGD("Message::~Message %d", m_what);
     clear();
 }
 
