@@ -12,6 +12,7 @@ LOCAL_SRC_FILES := \
     ServiceBaseImpl.cpp \
     ServiceBinderProxy.cpp \
     ServiceProxyBase.cpp \
+<<<<<<< HEAD
     ServiceProxyBaseImpl.cpp \
     AnonymousBinder.cpp \
     LooperThread.cpp \
