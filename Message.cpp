@@ -85,11 +85,11 @@ int Message::setPointer(void *value)
     return -1;
 }
 
-int Message::setString(const std::string &value)
+int Message::setString(const android::String8 &value)
 {
     Item *item = allocateItem();
     if(item != NULL) {
-        item->u.stringValue = new std::string(value);
+        item->u.stringValue = new android::String8(value);
         item->type = TypeString;
         return (m_itemNum - 1);
     }
@@ -166,7 +166,7 @@ bool Message::getPointerValue(int index, void **value)
     return false;
 }
 
-bool Message::getStringValue(int index, std::string *value)
+bool Message::getStringValue(int index, android::String8 *value)
 {
     Item *item = findItem(index);
     if(item != NULL) {

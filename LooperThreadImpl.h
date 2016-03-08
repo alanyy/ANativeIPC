@@ -4,7 +4,7 @@
 #include "utils/Thread.h"
 #include "utils/Condition.h"
 #include "ServiceBaseGlobal.h"
-#include <list>
+#include "utils/List.h"
 
 class Message;
 class MessageHandler;
@@ -33,7 +33,7 @@ private:
     android::sp<MessageHandler> m_msgHandler;
     android::Mutex m_eventLock;
     android::Condition m_eventListConditon;
-    std::list<Event> m_eventList;
+    android::List<Event> m_eventList;
 };
 
 #endif // LOOPERTHREADIMPL_H

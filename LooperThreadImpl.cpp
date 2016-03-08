@@ -40,7 +40,7 @@ int LooperThreadImpl::postMessage(const android::sp<Message> &msg, int delayMs)
         whenMs = getNowMs();
     }
 
-    std::list<Event>::iterator it = m_eventList.begin();
+    android::List<Event>::iterator it = m_eventList.begin();
     for(;it != m_eventList.end(); ++it) {
         if((*it).whenMs > whenMs) {
             break;

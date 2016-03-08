@@ -21,7 +21,7 @@ ServiceBaseImpl::~ServiceBaseImpl()
     clearBinders();
 }
 
-std::string &ServiceBaseImpl::name()
+android::String8 &ServiceBaseImpl::name()
 {
     return m_name;
 }
@@ -98,10 +98,10 @@ android::status_t ServiceBaseImpl::onTransact(uint32_t code, const android::Parc
 
 int ServiceBaseImpl::addService()
 {
-    BSLOGD("ServiceBaseImpl::addService %s", m_name.c_str());
+    BSLOGD("ServiceBaseImpl::addService %s", m_name.string());
     android::sp<android::IServiceManager> sm = android::defaultServiceManager();
     if(sm != NULL) {
-        return sm->addService(android::String16(m_name.c_str()), this);
+        return sm->addService(android::String16(m_name.string()), this);
     }
     return BS_NO_CONNECTION;
 }
@@ -187,9 +187,11 @@ void ServiceBaseImpl::onBinderDied(const android::wp<android::IBinder> &who)
 {
     android::Mutex::Autolock _l(m_clientLock);
     android::Vector<android::sp<android::BpBinder> >::iterator it;
+    BSLOGD("ServiceBaseImpl::onBinderDied who %p", who.unsafe_get());
     for(it = m_binders.begin();it != m_binders.end(); ++it) {
         if(((*it) != NULL) && ((*it) == who)) {
             SenderId id = (*it)->handle();
+            BSLOGD("ServiceBaseImpl::onBinderDied handle %d", id);
             if(m_if) {
                 m_if->onSenderDisconnect(id);
             }

@@ -1,7 +1,7 @@
 #ifndef SERVICEBASEIMPL_H
 #define SERVICEBASEIMPL_H
 
-#include <string>
+#include "utils/String8.h"
 #include "binder/Binder.h"
 #include "utils/StrongPointer.h"
 #include "ServiceBaseGlobal.h"
@@ -17,7 +17,7 @@ public:
     explicit ServiceBaseImpl(const char *name, ServiceBase *interface);
     virtual ~ServiceBaseImpl();
 
-    std::string &name();
+    android::String8 &name();
 
     void initialize();
     void finalize();
@@ -52,7 +52,7 @@ private:
         ServiceBaseImpl *m_service;
     };
 
-    std::string m_name;
+    android::String8 m_name;
     ServiceBase *m_if;
     android::Vector<android::sp<android::BpBinder> > m_binders;
     android::Mutex m_clientLock;

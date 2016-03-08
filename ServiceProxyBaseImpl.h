@@ -4,7 +4,7 @@
 #include "binder/IBinder.h"
 #include "binder/Parcel.h"
 #include "utils/Mutex.h"
-#include <string>
+#include "utils/String8.h"
 #include "ServiceBaseGlobal.h"
 
 class ServiceBinderProxy;
@@ -19,7 +19,7 @@ public:
 
     virtual void binderDied(const android::wp<android::IBinder>& who);
 
-    std::string &name();
+    android::String8 &name();
 
     bool tryConnect();
     bool setupAsyncRequest();
@@ -37,7 +37,7 @@ private:
     android::sp<AnonymousBinder> m_asyncBinder;
     android::Mutex m_serviceLock;
     android::Mutex m_asyncLock;
-    std::string m_name;
+    android::String8 m_name;
 };
 
 #endif // SERVICEPROXYBASEIMPL_H

@@ -21,14 +21,14 @@ void TestThread::test()
         Message *a = new Message(1);
         a->setInt(10);
         a->setPointer(a);
-        BSLOGD("[TID:%d][%lld]TestThread::test  post msg %d", androidGetThreadId(), systemTime(), a->what());
+        BSLOGD("[TID:%d][%lld]TestThread::test  post msg %d", (unsigned int)(androidGetThreadId()), systemTime(), a->what());
         postMessage(a);
         sleep(5);
         Message *b = new Message(2);
-        b->setString("abc");
+        b->setString(android::String8("abc"));
         b->setDouble(1.01);
         b->setPointer(b);
-        BSLOGD("[TID:%d][%lld]TestThread::test  post msg %d", androidGetThreadId(), systemTime(), b->what());
+        BSLOGD("[TID:%d][%lld]TestThread::test  post msg %d", (unsigned int)(androidGetThreadId()), systemTime(), b->what());
         postMessage(b, 500);
         sleep(5);
     }while(true);
@@ -48,7 +48,7 @@ TestThread::TestHandler::~TestHandler()
 void TestThread::TestHandler::onReceiveMessage(const android::sp<Message> &msg)
 {
     int what = msg->what();
-    BSLOGD("[TID:%d][%lld]TestHandler::onReceiveMessage msg is %d", androidGetThreadId(), systemTime(), what);
+    BSLOGD("[TID:%d][%lld]TestHandler::onReceiveMessage msg is %d", (unsigned int)(androidGetThreadId()), systemTime(), what);
     int cnt = msg->valueCount();
     for(int i = 0; i < cnt; ++i) {
         Message::Type type;
@@ -87,14 +87,14 @@ void TestThread::TestHandler::onReceiveMessage(const android::sp<Message> &msg)
         {
             void *ptr;
             msg->getPointerValue(i, &ptr);
-            BSLOGD("TestHandler::onReceiveMessage arg %d is %x", i, ptr);
+            BSLOGD("TestHandler::onReceiveMessage arg %d is %x", i, (unsigned int)ptr);
             break;
         }
         case Message::TypeString:
         {
-            std::string str;
+            android::String8 str;
             msg->getStringValue(i, &str);
-            BSLOGD("TestHandler::onReceiveMessage arg %d is %s", i, str.c_str());
+            BSLOGD("TestHandler::onReceiveMessage arg %d is %s", i, str.string());
             break;
         }
         default:

@@ -16,16 +16,16 @@ ServiceProxyBase::ServiceProxyBase(const char *name)
 
 ServiceProxyBase::~ServiceProxyBase()
 {
-    BSLOGD("ServiceProxyBase::~ServiceProxyBase %s", m_impl->name().c_str());
+    BSLOGD("ServiceProxyBase::~ServiceProxyBase %s", m_impl->name().string());
     android_atomic_and(~SERVICE_CONNECTED, &m_status);
 }
 
-std::string ServiceProxyBase::name()
+android::String8 ServiceProxyBase::name()
 {
     if(m_impl != NULL) {
         return m_impl->name();
     }
-    return std::string();
+    return android::String8();
 }
 
 bool ServiceProxyBase::isConnected()

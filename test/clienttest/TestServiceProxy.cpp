@@ -36,11 +36,11 @@ void TestServiceProxy::sendTestCommand()
             BSLOGD("TestServiceProxy::sendTestCommand sendSyncRequest reply str is %s", str);
         }
         sleep(5);
-        android::Parcel data1;
-        prepareAsyncData(data1);
-        data1.writeCString("hello service");
-        sendAsyncRequest(Async_Command, data1);
-        sleep(5);
+//        android::Parcel data1;
+//        prepareAsyncData(data1);
+//        data1.writeCString("hello service");
+//        sendAsyncRequest(Async_Command, data1);
+//        sleep(5);
     }while(true);
 }
 

@@ -2,7 +2,7 @@
 #define MESSAGE_H
 
 #include "utils/RefBase.h"
-#include <string>
+#include "utils/String8.h"
 #include "ServiceBaseGlobal.h"
 
 class SERVICEBASE_API Message : public android::RefBase
@@ -30,14 +30,14 @@ public:
     int setDouble(double value);
     int setFloat(float value);
     int setPointer(void *value);
-    int setString(const std::string &value);
+    int setString(const android::String8 &value);
 
     bool getIntValue(int index, int *value);
     bool getUIntValue(int index, unsigned int *value);
     bool getDoubleValue(int index, double *value);
     bool getFloatValue(int index, float *value);
     bool getPointerValue(int index, void **value);
-    bool getStringValue(int index, std::string *value);
+    bool getStringValue(int index, android::String8 *value);
 
     int valueCount();
     bool getItemType(int index, Type *type);
@@ -51,7 +51,7 @@ private:
             double doubleValue;
             float floatValue;
             void *pointerValue;
-            std::string *stringValue;
+            android::String8 *stringValue;
         } u;
         Type type;
     };
